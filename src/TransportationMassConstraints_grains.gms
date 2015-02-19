@@ -211,51 +211,55 @@ TransportationMassConstraint16(HarvestingHorizonAggregation,FCIGodownSet,Retaile
   );
 
 TransportationMassConstraint17(HarvestingHorizonAggregation,FCIGodownSet,PDSSet)..
-  (FCICAPPDSGrain(HarvestingHorizonAggregation,FCIGodownSet,PDSSet)
-  + FCICoveredPDSGrain(HarvestingHorizonAggregation,FCIGodownSet,PDSSet))
-  *(1+GrainMoisture(HarvestingHorizonAggregation))
+  (
+    FCICAPPDSGrain(HarvestingHorizonAggregation,FCIGodownSet,PDSSet) + 
+    FCICoveredPDSGrain(HarvestingHorizonAggregation,FCIGodownSet,PDSSet)
+  ) * (1+GrainMoisture(HarvestingHorizonAggregation))
   =l=
   sum(TransportationTypes$(TransportationData('LongDistanceIndicator',TransportationTypes)),
-  FCIPDSTruckTripRequirement(HarvestingHorizonAggregation,FCIGodownSet,PDSSet,TransportationTypes)
-  *TransportationData('MaximumLoad',TransportationTypes)
-  );
+    FCIPDSTruckTripRequirement(HarvestingHorizonAggregation,FCIGodownSet,PDSSet,TransportationTypes) * 
+    TransportationData('MaximumLoad',TransportationTypes)
+  )
+  ;
 
 TransportationMassConstraint18(HarvestingHorizonAggregation,MillerSet,RetailerSet)..
   MillerRetailerGrain(HarvestingHorizonAggregation,MillerSet,RetailerSet)
   =l=
   sum(TransportationTypes$(TransportationData('LongDistanceIndicator',TransportationTypes)),
-  MillerRetailerTruckTripRequirement(HarvestingHorizonAggregation,MillerSet,RetailerSet,TransportationTypes)
-  *TransportationData('MaximumLoad',TransportationTypes)
-  );
+    MillerRetailerTruckTripRequirement(HarvestingHorizonAggregation,MillerSet,RetailerSet,TransportationTypes) * 
+    TransportationData('MaximumLoad',TransportationTypes)
+  )
+  ;
 
-* Repeating the same constraints for the non-harvesting horizon
 TransportationMassConstraint1A(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,LocalCSPCenterSet)..
-  HarvestFarmGateLocalCSPGrain(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,LocalCSPCenterSet)
-  *(1+GrainMoisture(NonHarvestingHorizonAggregation))
+  HarvestFarmGateLocalCSPGrain(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,LocalCSPCenterSet) * 
+  (1+GrainMoisture(NonHarvestingHorizonAggregation))
   =l=
   sum(TransportationTypes$(TransportationData('ShortDistanceIndicator',TransportationTypes)),
-  FarmLocalCSPTruckTripRequirement(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,LocalCSPCenterSet,TransportationTypes)
-  *TransportationData('MaximumLoad',TransportationTypes)
-  );
-
+    FarmLocalCSPTruckTripRequirement(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,LocalCSPCenterSet,TransportationTypes) * 
+    TransportationData('MaximumLoad',TransportationTypes)
+  )
+  ;
 
 TransportationMassConstraint2A(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,RegionalCSPCenterSet)..
-  HarvestFarmGateRegionalCSPGrain(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,RegionalCSPCenterSet)
-  *(1+GrainMoisture(NonHarvestingHorizonAggregation))
+  HarvestFarmGateRegionalCSPGrain(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,RegionalCSPCenterSet) * 
+  (1+GrainMoisture(NonHarvestingHorizonAggregation))
   =l=
   sum(TransportationTypes$(TransportationData('MediumDistanceIndicator',TransportationTypes)),
-  FarmRegionalCSPTruckTripRequirement(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,RegionalCSPCenterSet,TransportationTypes)
-  *TransportationData('MaximumLoad',TransportationTypes)
-  );
+    FarmRegionalCSPTruckTripRequirement(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,RegionalCSPCenterSet,TransportationTypes) * 
+    TransportationData('MaximumLoad',TransportationTypes)
+  )
+  ;
 
 TransportationMassConstraint3A(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,LocalMarketSet)..
-  HarvestFarmGateLocalMarketGrain(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,LocalMarketSet)
-  *(1+GrainMoisture(NonHarvestingHorizonAggregation))
+  HarvestFarmGateLocalMarketGrain(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,LocalMarketSet) * 
+  (1+GrainMoisture(NonHarvestingHorizonAggregation))
   =l=
   sum(TransportationTypes$(TransportationData('ShortDistanceIndicator',TransportationTypes)),
-  FarmLocalMarketTruckTripRequirement(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,LocalMarketSet,TransportationTypes)
-  *TransportationData('MaximumLoad',TransportationTypes)
-  );
+    FarmLocalMarketTruckTripRequirement(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,LocalMarketSet,TransportationTypes) * 
+    TransportationData('MaximumLoad',TransportationTypes)
+  )
+  ;
 
 TransportationMassConstraint4A(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,RegionalMarketSet)$(connectselected(DistrictSelected,RegionalMarketSet))..
   HarvestFarmGateRegionalMarketGrain(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,RegionalMarketSet)

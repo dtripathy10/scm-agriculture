@@ -18,37 +18,41 @@ Parameter
 LocalCSPLocalMarket_GrainDelivered(HarvestingHorizonAggregation,LocalCSPCenterSet,LocalMarketSet) =
   sum((DistrictSelected,FarmNumber,HarvestingHorizonAggregation2) $(ord(HarvestingHorizonAggregation)>=ord(HarvestingHorizonAggregation2)),
     LocalCSPLocalMarketGrain.l(HarvestingHorizonAggregation,DistrictSelected,FarmNumber,LocalCSPCenterSet,LocalMarketSet,HarvestingHorizonAggregation2)
-  )*(1-TransportationDryMatterLossRate)
+  ) * (1-TransportationDryMatterLossRate)
   ;
 
 LocalCSPLocalMarket_GrainDelivered(NonHarvestingHorizonAggregation,LocalCSPCenterSet,LocalMarketSet) =
   sum((DistrictSelected,FarmNumber,HarvestingHorizonAggregation),
     LocalCSPLocalMarketGrain.l(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,LocalCSPCenterSet,LocalMarketSet,HarvestingHorizonAggregation)
-  )*(1-TransportationDryMatterLossRate)
+  ) * (1-TransportationDryMatterLossRate)
   ;
 
 RegionalCSPLocalMarket_GrainDelivered(HarvestingHorizonAggregation,RegionalCSPCenterSet,LocalMarketSet) =
   sum((DistrictSelected,FarmNumber,HarvestingHorizonAggregation2) $(ord(HarvestingHorizonAggregation)>=ord(HarvestingHorizonAggregation2)),
     RegionalCSPLocalMarketGrain.l(HarvestingHorizonAggregation,DistrictSelected,FarmNumber,RegionalCSPCenterSet,LocalMarketSet,HarvestingHorizonAggregation2)
-  )*(1-TransportationDryMatterLossRate)
+  ) * (1-TransportationDryMatterLossRate)
   ;
 
 RegionalCSPLocalMarket_GrainDelivered(NonHarvestingHorizonAggregation,RegionalCSPCenterSet,LocalMarketSet) =
   sum((DistrictSelected,FarmNumber,HarvestingHorizonAggregation),
     RegionalCSPLocalMarketGrain.l(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,RegionalCSPCenterSet,LocalMarketSet,HarvestingHorizonAggregation)
-  )*(1-TransportationDryMatterLossRate)
+  ) * (1-TransportationDryMatterLossRate)
   ;
 
 FarmGateLocalMarket_GrainDelivered(HarvestingHorizonAggregation,LocalMarketSet) =
-  sum(DistrictSelected,sum(FarmNumber,
-    HarvestFarmGateLocalMarketGrain.l(HarvestingHorizonAggregation,DistrictSelected,FarmNumber,LocalMarketSet)
-  ))*(1-TransportationDryMatterLossRate)
+  sum(DistrictSelected,
+    sum(FarmNumber,
+      HarvestFarmGateLocalMarketGrain.l(HarvestingHorizonAggregation,DistrictSelected,FarmNumber,LocalMarketSet)
+    )
+  ) * (1-TransportationDryMatterLossRate)
   ;
 
 FarmGateLocalMarket_GrainDelivered(NonHarvestingHorizonAggregation,LocalMarketSet) =
-  sum(DistrictSelected,sum(FarmNumber,
-    HarvestFarmGateLocalMarketGrain.l(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,LocalMarketSet)
-  ))*(1-TransportationDryMatterLossRate)
+  sum(DistrictSelected,
+    sum(FarmNumber,
+      HarvestFarmGateLocalMarketGrain.l(NonHarvestingHorizonAggregation,DistrictSelected,FarmNumber,LocalMarketSet)
+    )
+  ) * (1-TransportationDryMatterLossRate)
   ;
   
 TotalBags =                     

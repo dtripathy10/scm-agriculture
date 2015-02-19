@@ -11,7 +11,9 @@ TPDSConstraint1(HarvestingHorizonAggregation,PDSSet)..
   ) +
   sum(FCIGodownSet,
     FCICoveredPDSGrain(HarvestingHorizonAggregation,FCIGodownSet,PDSSet)
-  ) =g= PDSDemand(HarvestingHorizonAggregation,PDSSet)
+  ) 
+  =g= 
+  PDSDemand(HarvestingHorizonAggregation,PDSSet)
   ;
 
 TPDSConstraint2(NonHarvestingHorizonAggregation,PDSSet)..
@@ -20,7 +22,9 @@ TPDSConstraint2(NonHarvestingHorizonAggregation,PDSSet)..
   ) +
   sum(FCIGodownSet,
     FCICoveredPDSGrain(NonHarvestingHorizonAggregation,FCIGodownSet,PDSSet)
-  ) =g= PDSDemand(NonHarvestingHorizonAggregation,PDSSet)
+  ) 
+  =g=
+  PDSDemand(NonHarvestingHorizonAggregation,PDSSet)
   ;
 
 Model TPDSModel /
