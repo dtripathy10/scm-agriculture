@@ -1,7 +1,7 @@
 $title "Contains the costraint related to RGY"
 
 *----------------------------------------------------------------------------------------------
-* RGY: a storage where inputs are not processed.
+* RGY: a storage where inputs are not processed. only one type of storage is available            
 *----------------------------------------------------------------------------------------------
 
 Positive variable

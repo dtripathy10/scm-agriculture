@@ -1,5 +1,10 @@
 $title "The file that includes the constraints associated with miller"
 
+Positive variables
+  MillerPurchase(SimulationHorizon,MillerSet)
+  MillerTotalOutput
+  ;
+
 Equations
   MillerConstraint1
   MillerConstraint2
@@ -20,6 +25,10 @@ Equations
   MillerConstraint17
   MillerConstraint18
   MillerConstraint19
+
+  MillerConstraint20
+  MillerConstraint21
+  MillerConstraint22
   ;
 
 MillerConstraint1(HarvestingHorizonAggregation,MillerSet)..
@@ -32,12 +41,26 @@ MillerConstraint1(HarvestingHorizonAggregation,MillerSet)..
     ) +
     sum(RGYSet,
       RGYMillerGrain(HarvestingHorizonAggregation,RGYSet,MillerSet)
-    )
+    ) * (1-TransportationDryMatterLossRate)
+  ;
+
+MillerConstraint20(HarvestingHorizonAggregation,MillerSet)..
+  MillerPurchase(HarvestingHorizonAggregation,MillerSet) =e=
+    sum(FCIGodownSet,
+      FCICAPMillerGrain(HarvestingHorizonAggregation,FCIGodownSet,MillerSet)
+    ) +
+    sum(FCIGodownSet,
+      FCICoveredMillerGrain(HarvestingHorizonAggregation,FCIGodownSet,MillerSet)
+    ) +
+    sum(RGYSet,
+      RGYMillerGrain(HarvestingHorizonAggregation,RGYSet,MillerSet)
+    ) 
   ;
 
 MillerConstraint2(HarvestingHorizonAggregation,MillerSet)..   
   MillerInput(HarvestingHorizonAggregation,MillerSet) 
-  =l= MillerProcessingCapacity(MillerSet)
+  =l= 
+  MillerProcessingCapacity(MillerSet)
   ;
 
 MillerConstraint3(NonHarvestingHorizonAggregation,MillerSet)..
@@ -50,22 +73,38 @@ MillerConstraint3(NonHarvestingHorizonAggregation,MillerSet)..
     ) +
     sum(RGYSet,
       RGYMillerGrain(NonHarvestingHorizonAggregation,RGYSet,MillerSet)
-    )
+    ) * (1-TransportationDryMatterLossRate)
+  ;
+
+MillerConstraint21(NonHarvestingHorizonAggregation,MillerSet)..
+  MillerPurchase(NonHarvestingHorizonAggregation,MillerSet) =e=
+    sum(FCIGodownSet,
+      FCICAPMillerGrain(NonHarvestingHorizonAggregation,FCIGodownSet,MillerSet)
+    ) +
+    sum(FCIGodownSet,
+      FCICoveredMillerGrain(NonHarvestingHorizonAggregation,FCIGodownSet,MillerSet)
+    ) +
+    sum(RGYSet,
+      RGYMillerGrain(NonHarvestingHorizonAggregation,RGYSet,MillerSet)
+    ) 
   ;
 
 MillerConstraint4(NonHarvestingHorizonAggregation,MillerSet)..   
   MillerInput(NonHarvestingHorizonAggregation,MillerSet) 
-  =l= MillerProcessingCapacity(MillerSet)
+  =l= 
+  MillerProcessingCapacity(MillerSet)
   ;
 
 MillerConstraint5(MillerSet).. 
   MillerProcessingCapacity(MillerSet)
-  =l= MillerProcessingCapacity_Max(MillerSet)
+  =l= 
+  MillerProcessingCapacity_Max(MillerSet)
   ;
 
 MillerConstraint6(MillerSet).. 
   MillerProcessingCapacity(MillerSet)
-  =g= MillerProcessingCapacity_Min(MillerSet)
+  =g= 
+  MillerProcessingCapacity_Min(MillerSet)
   ;
 
 MillerConstraint7(HarvestingHorizonAggregation,MillerSet)..   
@@ -118,37 +157,51 @@ MillerConstraint13(NonHarvestingHorizonAggregation,MillerSet)$(ord(NonHarvesting
 
 
 MillerConstraint14(NonHarvestingHorizonAggregation,MillerSet)..
-  MilledGrainOutput(NonHarvestingHorizonAggregation,MillerSet)*card(NonHarvestingHorizonAggregation)
-  =l= MillerStoredGrain(NonHarvestingHorizonAggregation,MillerSet)
+  MilledGrainOutput(NonHarvestingHorizonAggregation,MillerSet) * card(NonHarvestingHorizonAggregation)
+  =l= 
+  MillerStoredGrain(NonHarvestingHorizonAggregation,MillerSet)
   ;
 
 MillerConstraint15(NonHarvestingHorizonAggregation,MillerSet)..
   MilledGrainOutput(NonHarvestingHorizonAggregation,MillerSet) =e=
-  sum(RetailerSet, 
-    MillerRetailerGrain(NonHarvestingHorizonAggregation,MillerSet,RetailerSet)
-  )
+    sum(RetailerSet, 
+      MillerRetailerGrain(NonHarvestingHorizonAggregation,MillerSet,RetailerSet)
+    )
   ;
 
 MillerConstraint16(HarvestingHorizonAggregation,MillerSet)..
   MillerStoredGrain(HarvestingHorizonAggregation,MillerSet)
-  =l= MillerStorageCapacity(MillerSet)
+  =l= 
+  MillerStorageCapacity(MillerSet)
   ;
 
 MillerConstraint17(NonHarvestingHorizonAggregation,MillerSet)..
   MillerStoredGrain(NonHarvestingHorizonAggregation,MillerSet)
-  =l= MillerStorageCapacity(MillerSet)
+  =l= 
+  MillerStorageCapacity(MillerSet)
   ;
 
 MillerConstraint18(MillerSet)..   
   MillerStorageCapacity(MillerSet) 
-  =l= MillerStorageCapacity_Max(MillerSet)
+  =l= 
+  MillerStorageCapacity_Max(MillerSet)
   ;
 
 MillerConstraint19(MillerSet)..    
   MillerSelector(MillerSet) 
-  =g= MillerProcessingCapacity(MillerSet)/MillerProcessingCapacity_Max(MillerSet)
+  =g= 
+  MillerProcessingCapacity(MillerSet)/MillerProcessingCapacity_Max(MillerSet)
   ;
 
+MillerConstraint22(MillerSet)..
+  MillerTotalOutput =e=
+    sum(HarvestingHorizonAggregation,
+      MilledGrainOutput(HarvestingHorizonAggregation,MillerSet)
+    ) * card(HarvestingHorizonAggregationStep) +
+    sum(NonHarvestingHorizonAggregation,
+      MilledGrainOutput(NonHarvestingHorizonAggregation,MillerSet)
+    ) * card(NonHarvestingHorizonAggregationStep)
+  ;
 
 Model MillerModel /
   MillerConstraint1
@@ -169,6 +222,7 @@ Model MillerModel /
   MillerConstraint17
   MillerConstraint18
   MillerConstraint19
+
+  MillerConstraint20
+  MillerConstraint21
   /;
-
-

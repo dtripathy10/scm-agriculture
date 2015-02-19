@@ -27,19 +27,19 @@ Equations
   PHLConstraint4 "maximum total loss constraint"
 
   PHLConstraint1TL "transportation loss by miller in percentage"
-  PHLConstraint2TL "transportation loss by retailer in percentage"
-  PHLConstraint3TL "transportation loss by tpds in percentage"
+*  PHLConstraint2TL "transportation loss by retailer in percentage"
+*  PHLConstraint3TL "transportation loss by tpds in percentage"
   PHLConstraint4TL "transportation loss by RGY in percentage"
   PHLConstraint5TL "transportation loss by FCI in percentage"
   PHLConstraint6TL "transportation loss from farmer-storage-market in percentage"
 
   PHLConstraint1SL "storage loss by miller in percentage"
-  PHLConstraint2SL "loss by retailer in percentage"
-  PHLConstraint3SL "loss by tpds in percentage"
+*  PHLConstraint2SL "loss by retailer in percentage"
+*  PHLConstraint3SL "loss by tpds in percentage"
   PHLConstraint4SL "loss by RGY in percentage"
   PHLConstraint5SL "loss by FCI in percentage"
-  PHLConstraint6SL "loss by RGY in percentage"
-  PHLConstraint7SL "loss by FCI in percentage"
+*  PHLConstraint6SL "loss by RGY in percentage"
+*  PHLConstraint7SL "loss by FCI in percentage"
   ;
 
 PHLConstraint1(HarvestingHorizonAggregation)..
@@ -79,7 +79,7 @@ PHLConstraint1TL..
       ) 
     ))*100
   ;
-
+$Ontext
 PHLConstraint2TL..
   Retail_Transportation_Loss =e=
     ((
@@ -131,6 +131,7 @@ PHLConstraint3TL..
       ) 
     ))*100
   ;
+$offtext
 
 PHLConstraint4TL..
   RGY_Transportation_Loss =e=
@@ -213,7 +214,7 @@ PHLConstraint6TL..
 
 PHLConstraint1SL..
   Miller_Storage_Loss =e=
-    ((sum((HarvestingHorizonAggregation,MillerSet), 
+    (sum((HarvestingHorizonAggregation,MillerSet), 
       MillerInput(HarvestingHorizonAggregation,MillerSet) * card(HarvestingHorizonAggregationStep)
     ) +
     sum((NonHarvestingHorizonAggregation,MillerSet), 
@@ -227,7 +228,7 @@ PHLConstraint1SL..
       MillerInput(NonHarvestingHorizonAggregation,MillerSet) * card(NonHarvestingHorizonAggregationStep)
     ))*100
   ;
-
+$Ontext
 PHLConstraint2SL..
   Retail_Storage_Loss =e=
     ((sum((HarvestingHorizonAggregation,RetailSet), 
@@ -261,10 +262,10 @@ PHLConstraint3SL..
       TPDSInput(NonHarvestingHorizonAggregation,TPDSSet) * card(NonHarvestingHorizonAggregationStep)
     ))*100
   ;
- 
+$offtext
  PHLConstraint4SL..
   RGY_Storage_Loss =e=
-    ((sum((HarvestingHorizonAggregation,RGYSet), 
+    (sum((HarvestingHorizonAggregation,RGYSet), 
       RGYInput(HarvestingHorizonAggregation,RGYSet) * card(HarvestingHorizonAggregationStep)
     ) +
     sum((NonHarvestingHorizonAggregation,RGYSet), 
@@ -281,7 +282,7 @@ PHLConstraint3SL..
  
  PHLConstraint5SL..
   FCI_Storage_Loss =e=
-    ((sum((HarvestingHorizonAggregation,FCIGodownSet), 
+    (sum((HarvestingHorizonAggregation,FCIGodownSet), 
       FCIInput(HarvestingHorizonAggregation,FCIGodownSet) * card(HarvestingHorizonAggregationStep)
     ) +
     sum((NonHarvestingHorizonAggregation,FCIGodownSet), 
@@ -295,10 +296,10 @@ PHLConstraint3SL..
       FCIInput(NonHarvestingHorizonAggregation,FCIGodownSet) * card(NonHarvestingHorizonAggregationStep)
     ))*100
   ;
-
+$Ontext
 PHLConstraint6SL..
   LocalCSP_Storage_Loss =e=
-    ((sum((HarvestingHorizonAggregation,LocalCSPCenterSet), 
+    (sum((HarvestingHorizonAggregation,LocalCSPCenterSet), 
       LocalCSPInput(HarvestingHorizonAggregation,LocalCSPCenterSet) * card(HarvestingHorizonAggregationStep)
     ) +
     sum((NonHarvestingHorizonAggregation,LocalCSPCenterSet), 
@@ -315,7 +316,7 @@ PHLConstraint6SL..
 
 PHLConstraint7SL..
   RegionalCSP_Storage_Loss =e=
-    ((sum((HarvestingHorizonAggregation,RegionalCSPCenterSet), 
+    (sum((HarvestingHorizonAggregation,RegionalCSPCenterSet), 
       RegionalCSPInput(HarvestingHorizonAggregation,RegionalCSPCenterSet) * card(HarvestingHorizonAggregationStep)
     ) +
     sum((NonHarvestingHorizonAggregation,RegionalCSPCenterSet), 
@@ -329,12 +330,20 @@ PHLConstraint7SL..
       RegionalCSPInput(NonHarvestingHorizonAggregation,RegionalCSPCenterSet) * card(NonHarvestingHorizonAggregationStep)
     ))*100
   ;
-
+$offtext
+$ontext
 PHLConstraint3..    
   TotalPHLLoss =e= Miller_Transportation_Loss + Retail_Transportation_Loss + TPDS_Transportation_Loss +
     RGY_Transportation_Loss + FCI_Transportation_Loss + Market_Transportation_Loss +  Miller_Storage_Loss +
     Retail_Storage_Loss + TPDS_Storage_Loss + RGY_Storage_Loss + FCI_Storage_Loss + LocalCSP_Storage_Loss +
     RegionalCSP_Storage_Loss
+  ;
+$offtext
+
+PHLConstraint3..    
+  TotalPHLLoss =e= Miller_Transportation_Loss +
+    RGY_Transportation_Loss + FCI_Transportation_Loss + Market_Transportation_Loss +  Miller_Storage_Loss +
+    RGY_Storage_Loss + FCI_Storage_Loss
   ;
 
 PHLConstraint4.. 
@@ -348,17 +357,17 @@ Model PHLConstraints /
   PHLConstraint4
 
   PHLConstraint1TL
-  PHLConstraint2TL
-  PHLConstraint3TL
+*  PHLConstraint2TL
+*  PHLConstraint3TL
   PHLConstraint4TL
   PHLConstraint5TL
   PHLConstraint6TL
 
   PHLConstraint1SL
-  PHLConstraint2SL
-  PHLConstraint3SL
+*  PHLConstraint2SL
+*  PHLConstraint3SL
   PHLConstraint4SL
   PHLConstraint5SL
-  PHLConstraint6SL
-  PHLConstraint7SL
+*  PHLConstraint6SL
+*  PHLConstraint7SL
   /;

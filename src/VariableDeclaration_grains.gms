@@ -74,7 +74,7 @@ Positive variables
   RGYRetailerGrain "The total grain moved from an RGY to a retailer"
   RGYCapacity "The total capacity of the RGY that is calcualted based on the amount of grain stored at each time in the RGY"
 
-  MillerInput "The total input to a particular miller during a given time-step"
+  MillerInput(SimulationHorizon,MillerSet) "The total input to a particular miller during a given time-step"
   MilledGrainOutput "The total output of milled grain from a particular miller during a given time-step which can  be sent to the storage facility"
   MillerStoredGrain "The total amount of grain stored at a miller during a particular time-step"
   MillerOutput "The total output of milled grain from a particular miller during a given time-step that is removed from the milling facility and sent to further destinations"
@@ -82,7 +82,7 @@ Positive variables
   MillerStorageCapacity "the capacity in kg in terms of the amount of grain that must be stored by a mill"
   MillerRetailerGrain "The total grain that is transported from a particular  miller to a particular  retailer"
 
-  FCIInput  "The total input to a particular FCI godown during a given time-step"
+  FCIInput(SimulationHorizon,FCIGodownSet)  "The total input to a particular FCI godown during a given time-step"
   FCICAPStorageInput "The input grain to a particular godown that is sent to CAP storage at that godown"
   FCICoveredStorageInput "The input grain to a particular godown that is sent to covered storage at that godown"
   FCICAPStoredGrain "The total grain that is stored in a CAP facility within an FCI godown"

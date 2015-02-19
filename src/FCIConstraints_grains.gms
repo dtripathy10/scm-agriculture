@@ -1,10 +1,17 @@
+$title "Contains the costraint related to FCI"
+
+*-----------------------------------------------------------------------------------------------------
+* FCI: a storage where inputs are not processed. Two types of storage is available i.e CAP and Covered            
+*-----------------------------------------------------------------------------------------------------
+
 Positive variables
-  FCIPurchase
+  FCIPurchase(SimulationHorizon,FCIGodownSet)
+  FCITotalOutput
   ;
   
 Equations
-  FCIBalance1
-  FCIBalance2
+  FCIBalance1 "calculating the input to the FCI excluded the loss due to transportaion in harvesting horizon"
+  FCIBalance2 "calculating the input to the FCI excluded the loss due to transportaion in non-harvesting horizon"
   FCIBalance3
   FCIBalance4
   FCIBalance5
@@ -26,32 +33,17 @@ Equations
   FCIBalance21
   FCIBalance22
 
-  FCIBalance23
-  FCIBalance24
+  FCIBalance23 "FCI purchase in harvest horizon"
+  FCIBalance24 "FCI purchase in non-harvest horizon"
+  FCIBalance25 "FCI total output"
   ;
-* #########################################################################################################################
-* FCI total purchase
-
-FCIBalance23(HarvestingHorizonAggregation,FCIGodownSet)..
-  FCIPurchase(HarvestingHorizonAggregation,FCIGodownSet)
-  =e=
-  sum(RegionalMarketSet,RegionalMarketFCIGrain(HarvestingHorizonAggregation,RegionalMarketSet,FCIGodownSet))
-  ;
-
-FCIBalance24(NonHarvestingHorizonAggregation,FCIGodownSet)..
-  FCIPurchase(NonHarvestingHorizonAggregation,FCIGodownSet)
-  =e=
-  sum(RegionalMarketSet,RegionalMarketFCIGrain(NonHarvestingHorizonAggregation,RegionalMarketSet,FCIGodownSet))
-  ;
-
-* #########################################################################################################################
-* First calculating the total input to the FCI excluded the loss due to transportaion
 
 FCIBalance1(HarvestingHorizonAggregation,FCIGodownSet)..
   FCIInput(HarvestingHorizonAggregation,FCIGodownSet)
   =e=
-  sum(RegionalMarketSet,RegionalMarketFCIGrain(HarvestingHorizonAggregation,RegionalMarketSet,FCIGodownSet))
-  *(1-TransportationDryMatterLossRate)
+  sum(RegionalMarketSet,
+    RegionalMarketFCIGrain(HarvestingHorizonAggregation,RegionalMarketSet,FCIGodownSet)
+  ) * (1-TransportationDryMatterLossRate)
   ;
 
 FCIBalance2(NonHarvestingHorizonAggregation,FCIGodownSet)..
@@ -77,30 +69,24 @@ FCIBalance4(NonHarvestingHorizonAggregation,FCIGodownSet)..
   FCICoveredStorageInput(NonHarvestingHorizonAggregation,FCIGodownSet)
   ;
 
-*##########################################################################################################################
-
-*===============================================================================================
-* Doing the accounting for the FCI storage facility for biomass stored in buildings (covered)
-*===============================================================================================
+*****************************************************************************************************
 FCIBalance5(HarvestingHorizonAggregation,FCIGodownSet)..
   FCICoveredStoredGrain(HarvestingHorizonAggregation,FCIGodownSet)
   =e=
   sum(HarvestingHorizonAggregation2
      $(ord(HarvestingHorizonAggregation2)=ord(HarvestingHorizonAggregation)-1),
-     FCICoveredStoredGrain(HarvestingHorizonAggregation2,FCIGodownSet)
-  -
-  sum(MillerSet,FCICoveredMillerGrain(HarvestingHorizonAggregation2,FCIGodownSet,MillerSet))
-  *card(HarvestingHorizonAggregationStep)
-  -
-  sum(RetailerSet,FCICoveredRetailerGrain(HarvestingHorizonAggregation2,FCIGodownSet,RetailerSet))
-  *card(HarvestingHorizonAggregationStep)
-  -
-  sum(PDSSet,FCICoveredPDSGrain(HarvestingHorizonAggregation2,FCIGodownSet,PDSSet))
-  *card(HarvestingHorizonAggregationStep)
-  )*(1-(FCIGodownCoveredLossRate)*card(HarvestingHorizonAggregationStep)/30)
-  +
-  FCICoveredStorageInput(HarvestingHorizonAggregation,FCIGodownSet)
-  *card(HarvestingHorizonAggregationStep)
+     FCICoveredStoredGrain(HarvestingHorizonAggregation2,FCIGodownSet) -
+    sum(MillerSet,
+      FCICoveredMillerGrain(HarvestingHorizonAggregation2,FCIGodownSet,MillerSet)
+    ) * card(HarvestingHorizonAggregationStep) -
+    sum(RetailerSet,
+      FCICoveredRetailerGrain(HarvestingHorizonAggregation2,FCIGodownSet,RetailerSet)
+    ) * card(HarvestingHorizonAggregationStep) -
+    sum(PDSSet,
+      FCICoveredPDSGrain(HarvestingHorizonAggregation2,FCIGodownSet,PDSSet)
+    ) * card(HarvestingHorizonAggregationStep)
+  )*(1-(FCIGodownCoveredLossRate)*card(HarvestingHorizonAggregationStep)/30) +
+  FCICoveredStorageInput(HarvestingHorizonAggregation,FCIGodownSet) * card(HarvestingHorizonAggregationStep)
   ;
 
 FCIBalance6(HarvestingHorizonAggregation,FCIGodownSet)..
@@ -184,28 +170,23 @@ FCIBalance11(NonHarvestingHorizonAggregation,FCIGodownSet)..
   FCICoveredCapacity(FCIGodownSet)
   ;
 
-*================================================================================================
-* Doing the accounting for the FCI storage facility for biomass stored in open using Cover and Plinth (CAP) method
-*================================================================================================
 FCIBalance12(HarvestingHorizonAggregation,FCIGodownSet)..
   FCICAPStoredGrain(HarvestingHorizonAggregation,FCIGodownSet)
   =e=
   sum(HarvestingHorizonAggregation2
-     $(ord(HarvestingHorizonAggregation2)=ord(HarvestingHorizonAggregation)-1),
-     FCICAPStoredGrain(HarvestingHorizonAggregation2,FCIGodownSet)
-  -
-  sum(MillerSet,FCICAPMillerGrain(HarvestingHorizonAggregation2,FCIGodownSet,MillerSet))
-  *card(HarvestingHorizonAggregationStep)
-  -
-  sum(RetailerSet,FCICAPRetailerGrain(HarvestingHorizonAggregation2,FCIGodownSet,RetailerSet))
-  *card(HarvestingHorizonAggregationStep)
-  -
-  sum(PDSSet,FCICAPPDSGrain(HarvestingHorizonAggregation2,FCIGodownSet,PDSSet))
-  *card(HarvestingHorizonAggregationStep)
-  )*(1-(FCIGodownCAPLossRate)*card(HarvestingHorizonAggregationStep)/30)
-  +
-  FCICAPStorageInput(HarvestingHorizonAggregation,FCIGodownSet)
-  *card(HarvestingHorizonAggregationStep)
+    $(ord(HarvestingHorizonAggregation2)=ord(HarvestingHorizonAggregation)-1),
+    FCICAPStoredGrain(HarvestingHorizonAggregation2,FCIGodownSet) -
+    sum(MillerSet,
+      FCICAPMillerGrain(HarvestingHorizonAggregation2,FCIGodownSet,MillerSet)
+    ) * card(HarvestingHorizonAggregationStep) -
+    sum(RetailerSet,
+      FCICAPRetailerGrain(HarvestingHorizonAggregation2,FCIGodownSet,RetailerSet)
+    ) * card(HarvestingHorizonAggregationStep) -
+    sum(PDSSet,
+      FCICAPPDSGrain(HarvestingHorizonAggregation2,FCIGodownSet,PDSSet)
+    ) * card(HarvestingHorizonAggregationStep)
+  )*(1-(FCIGodownCAPLossRate)*card(HarvestingHorizonAggregationStep)/30) +
+  FCICAPStorageInput(HarvestingHorizonAggregation,FCIGodownSet) * card(HarvestingHorizonAggregationStep)
   ;
 
 FCIBalance13(HarvestingHorizonAggregation,FCIGodownSet)..
@@ -265,14 +246,15 @@ FCIBalance15(NonHarvestingHorizonAggregation,FCIGodownSet)$(ord(NonHarvestingHor
 
 
 FCIBalance16(NonHarvestingHorizonAggregation,FCIGodownSet)..
-  sum(MillerSet,FCICAPMillerGrain(NonHarvestingHorizonAggregation,FCIGodownSet,MillerSet))
-  *card(NonHarvestingHorizonAggregationStep)
-  +
-  sum(RetailerSet,FCICAPRetailerGrain(NonHarvestingHorizonAggregation,FCIGodownSet,RetailerSet))
-  *card(NonHarvestingHorizonAggregationStep)
-  +
-  sum(PDSSet,FCICAPPDSGrain(NonHarvestingHorizonAggregation,FCIGodownSet,PDSSet))
-  *card(NonHarvestingHorizonAggregationStep)
+  sum(MillerSet,
+    FCICAPMillerGrain(NonHarvestingHorizonAggregation,FCIGodownSet,MillerSet)
+  ) * card(NonHarvestingHorizonAggregationStep) +
+  sum(RetailerSet,
+    FCICAPRetailerGrain(NonHarvestingHorizonAggregation,FCIGodownSet,RetailerSet)
+  ) * card(NonHarvestingHorizonAggregationStep) +
+  sum(PDSSet,
+    FCICAPPDSGrain(NonHarvestingHorizonAggregation,FCIGodownSet,PDSSet)
+  ) * card(NonHarvestingHorizonAggregationStep)
   =l=
   FCICAPStoredGrain(NonHarvestingHorizonAggregation,FCIGodownSet)
   ;
@@ -289,24 +271,93 @@ FCIBalance18(NonHarvestingHorizonAggregation,FCIGodownSet)..
   =l=
   FCICAPCapacity(FCIGodownSet)
   ;
-*================================================================================================
 
 FCIBalance19(FCIGodownSet)..    
-  FCICAPCapacity(FCIGodownSet) + FCICoveredCapacity(FCIGodownSet) =l= FCI_Max(FCIGodownSet)
+  FCICAPCapacity(FCIGodownSet) + FCICoveredCapacity(FCIGodownSet) 
+  =l= 
+  FCI_Max(FCIGodownSet)
   ;
 
 FCIBalance20(FCIGodownSet)..    
-  FCISelector(FCIGodownSet) =g= (FCICAPCapacity(FCIGodownSet) + FCICoveredCapacity(FCIGodownSet))/FCI_Max(FCIGodownSet)
+  FCISelector(FCIGodownSet) 
+  =g= 
+  (FCICAPCapacity(FCIGodownSet) + FCICoveredCapacity(FCIGodownSet))/FCI_Max(FCIGodownSet)
   ;
 
 FCIBalance21(FCIGodownSet)..    
-  FCICAPCapacity(FCIGodownSet) + FCICoveredCapacity(FCIGodownSet) =g= FCISelector(FCIGodownSet)*FCI_Min(FCIGodownSet)
+  FCICAPCapacity(FCIGodownSet) + FCICoveredCapacity(FCIGodownSet) 
+  =g=
+  FCISelector(FCIGodownSet) * FCI_Min(FCIGodownSet)
   ;
 
 
 FCIBalance22.. 
-  sum((HarvestingHorizonAggregation,FCIGodownSet), FCICAPStorageInput(HarvestingHorizonAggregation,FCIGodownSet))
-    +  sum((NonHarvestingHorizonAggregation,FCIGodownSet), FCICAPStorageInput(NonHarvestingHorizonAggregation,FCIGodownSet)) =g= 0
+  sum((HarvestingHorizonAggregation,FCIGodownSet), 
+    FCICAPStorageInput(HarvestingHorizonAggregation,FCIGodownSet)
+  ) + 
+  sum((NonHarvestingHorizonAggregation,FCIGodownSet), 
+    FCICAPStorageInput(NonHarvestingHorizonAggregation,FCIGodownSet)
+  ) 
+  =g=
+  0
+  ;
+
+FCIBalance23(HarvestingHorizonAggregation,FCIGodownSet)..
+  FCIPurchase(HarvestingHorizonAggregation,FCIGodownSet) =e=
+    sum(RegionalMarketSet,
+      RegionalMarketFCIGrain(HarvestingHorizonAggregation,RegionalMarketSet,FCIGodownSet)
+    )
+  ;
+
+FCIBalance24(NonHarvestingHorizonAggregation,FCIGodownSet)..
+  FCIPurchase(NonHarvestingHorizonAggregation,FCIGodownSet) =e=
+    sum(RegionalMarketSet,
+      RegionalMarketFCIGrain(NonHarvestingHorizonAggregation,RegionalMarketSet,FCIGodownSet)
+    )
+  ;
+
+FCIBalance25(FCIGodownSet)..
+  FCITotalOutput =e=
+    sum(HarvestingHorizonAggregation,
+      sum(MillerSet,
+        FCICoveredMillerGrain(HarvestingHorizonAggregation,FCIGodownSet,MillerSet)
+      ) * card(HarvestingHorizonAggregationStep) +
+      sum(RetailerSet,
+        FCICoveredRetailerGrain(HarvestingHorizonAggregation,FCIGodownSet,RetailerSet)
+      ) * card(HarvestingHorizonAggregationStep) +
+      sum(PDSSet,
+        FCICoveredPDSGrain(HarvestingHorizonAggregation,FCIGodownSet,PDSSet)
+      ) * card(HarvestingHorizonAggregationStep) +
+      sum(MillerSet,
+        FCICAPMillerGrain(HarvestingHorizonAggregation,FCIGodownSet,MillerSet)
+      ) * card(HarvestingHorizonAggregationStep) +
+      sum(RetailerSet,
+        FCICAPRetailerGrain(HarvestingHorizonAggregation,FCIGodownSet,RetailerSet)
+      ) * card(HarvestingHorizonAggregationStep) +
+      sum(PDSSet,
+        FCICAPPDSGrain(HarvestingHorizonAggregation,FCIGodownSet,PDSSet)
+      ) * card(HarvestingHorizonAggregationStep)
+    ) +
+    sum(NonHarvestingHorizonAggregation,
+      sum(MillerSet,
+        FCICoveredMillerGrain(NonHarvestingHorizonAggregation,FCIGodownSet,MillerSet)
+      ) * card(NonHarvestingHorizonAggregationStep) +
+      sum(RetailerSet,
+        FCICoveredRetailerGrain(NonHarvestingHorizonAggregation,FCIGodownSet,RetailerSet)
+      ) * card(NonHarvestingHorizonAggregationStep) +
+      sum(PDSSet,
+        FCICoveredPDSGrain(NonHarvestingHorizonAggregation,FCIGodownSet,PDSSet)
+      ) * card(NonHarvestingHorizonAggregationStep) +
+      sum(MillerSet,
+        FCICAPMillerGrain(NonHarvestingHorizonAggregation,FCIGodownSet,MillerSet)
+      ) * card(NonHarvestingHorizonAggregationStep) +
+      sum(RetailerSet,
+        FCICAPRetailerGrain(NonHarvestingHorizonAggregation,FCIGodownSet,RetailerSet)
+      ) * card(NonHarvestingHorizonAggregationStep) +
+      sum(PDSSet,
+        FCICAPPDSGrain(NonHarvestingHorizonAggregation,FCIGodownSet,PDSSet)
+      ) * card(NonHarvestingHorizonAggregationStep)
+    )
   ;
 
 Model FCIModel /
