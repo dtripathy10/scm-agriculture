@@ -68,4 +68,5 @@ outdat*.*
 desktop.ini
 $RECYCLE.BIN/*
 .Rproj.user
+*.gpr
 
