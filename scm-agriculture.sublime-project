@@ -4,7 +4,7 @@
 		{
       "folder_exclude_patterns": ["src"],
       "name": "Project Setting",
-			"path": "/C/Users/dtripathy/Downloads/Project/scm-agriculture"
+			"path": "/C/Users/Debabrata/Downloads/Projects/scm-agriculture"
 		},
     { 
       "folder_exclude_patterns": ["report","bin","output","sample","data"],
