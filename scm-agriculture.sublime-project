@@ -2,7 +2,6 @@
 	"folders":
 	[
 		{
-      "folder_exclude_patterns": ["src"],
       "name": "Project Setting",
 			"path": "/C/Users/Debabrata/Downloads/Projects/scm-agriculture"
 		},
@@ -11,7 +10,7 @@
       "file_exclude_patterns": ["*.sublime-workspace","*.gitignore","*.l*","*.~*","*.gdx",
         "*.xl*","*.md","*.gpr","*.markdown"],
       "name": "SCM Agriculture",
-      "path": "src"
+      "path": "src/"
     }
 
 	],

@@ -330,7 +330,7 @@ PHLConstraint3..
 PHLConstraint4.. 
   TotalPHLLoss 
   =l=
-  3.5 * Par_FarmGateTotalGrain
+  (3.5 * Par_FarmGateTotalGrain)/100          
   ;
 
 Model PHLConstraints /
