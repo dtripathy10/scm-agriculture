@@ -15,37 +15,41 @@ $title "This file is used when the user wants to simulate/optimize for a given c
 *##############################################################################################################
 * Adding the necessary sets for the grain problem here. These can be imported from a gdx file in a more efficient code. But that will be addressed later.
 Set
-  LocalCSPCenterSet /LocalStorage-1/
-  RegionalCSPCenterSet /RegionalStorage-1/
-* Districts selected from the Set 'District'
-  DistrictSelected /District-1,District-2/
-* Individual village market
-  LocalMarketSet    /LocalMarket-1/
-* Mandis
-  RegionalMarketSet /RegionalMarket-1*RegionalMarket-4/
-* One RGY per district
-  RGYSet /RGY-1, RGY-2/
-*FCI godows
-  FCIGodownSet /FCI-1*FCI-2/
-* Miller locations
-  MillerSet /M-1*M-4/
-* Retailers
-  RetailerSet /R-1*R-2/
-* Ration shops
-  PDSSet /PDS-1*PDS-2/
-  FarmType /Marginal, Small, Semi_Medium, Medium, Large/
+  LocalCSPCenterSet
+  RegionalCSPCenterSet
+  DistrictSelected
+  LocalMarketSet
+  RegionalMarketSet
+  RGYSet
+  FCIGodownSet
+  MillerSet
+  RetailerSet
+  PDSSet
+  FarmType
   ;
 
-$Ontext
-**********************************SET Collection from Execel file*******************************
-$GDXIN "../data/supplychain_sets.gdx"
-$LOAD  DistrictSelected RegionalMarketSet RGYSet FCIGodownSet MillerSet RetailerSet PDSSet
+
+$CALL GDXXRW.EXE "../data/data/reference_data.xls"  set=LocalCSPCenterSet rng=LocalCSPCenterSet!A2:A9  Rdim=1   set=RegionalCSPCenterSet rng=RegionalCSPCenterSet!A2:A9  Rdim=1   set=DistrictSelected rng=District!B2:B52  Rdim=1 set=LocalMarketSet rng=local_market!A2:A9  Rdim=1 set=RegionalMarketSet rng=regional_market!A2:A1047  Rdim=1 set=RGYSet rng=RGYSet!A2:A9  Rdim=1 set=FCIGodownSet rng=FCIGodownSet!A2:A9  Rdim=1 set=MillerSet rng=MillerSet!A2:A9  Rdim=1 set=RetailerSet rng=RetailerSet!A2:A9  Rdim=1 set=PDSSet rng=PDSSet!A2:A9  Rdim=1 set=FarmType rng=FarmType!A2:A6  Rdim=1
+
+
+$GDXIN "reference_data.gdx"
+$LOAD  LocalCSPCenterSet, RegionalCSPCenterSet, DistrictSelected, LocalMarketSet, RegionalMarketSet, RGYSet, FCIGodownSet, MillerSet, RetailerSet, PDSSet, FarmType
 $GDXIN
-Display  
-  DistrictSelected, RegionalMarketSet, RGYSet, FCIGodownSet, MillerSet, RetailerSet, PDSSet 
+
+Display
+  LocalCSPCenterSet
+  RegionalCSPCenterSet
+  DistrictSelected
+  LocalMarketSet
+  RegionalMarketSet
+  RGYSet
+  FCIGodownSet
+  MillerSet
+  RetailerSet
+  PDSSet
+  FarmType
   ;
-**************************************************************************************
-$offtext
+
 
 set connectselected(DistrictSelected,RegionalMarketSet)
   /
@@ -58,12 +62,12 @@ set connectselected(DistrictSelected,RegionalMarketSet)
 *##############################################################################################################
 * Importing data pertaining to grain prices at different locations
 *##############################################################################################################
-Parameter  
+Parameter
   GrainPurchasePrice_Input, FarmSize_Input
   ;
 $GDXIN "../data/Grains_PricesAndDistances.gdx"
 
-Set 
+Set
   GrainPurchasePriceSet(*)
   SimulationSteps(*)
   TotalFarmNumber(*)
@@ -80,14 +84,12 @@ $GDXIN
 
 alias(FarmNumber,TotalFarmNumber);
 
-Display 
-  RegionalMarketSet
-  ;
+
 
 *##############################################################################################################
 * Declaring the parameters that impact which model is to be simulated (current or potential)
 *##############################################################################################################
-Parameter 
+Parameter
   CurrentScenario The parameter that indicates whether we are selecting the current wheat supply chain or not /1/
   FutureScenario The parameter that indicates whether we are selecting the future wheat supply chain or not /0/
   ;
@@ -171,7 +173,7 @@ GrainAvailable(DistrictSelected,FarmNumber) =  GrainProduction(DistrictSelected,
 ));
 
 
-Display 
+Display
   GrainPurchasePrice_Input, FarmSize, GrainProduction, GrainAvailable
   ;
 
@@ -198,7 +200,7 @@ FCIRetailerDistance(FCIGodownSet,RetailerSet)=normal(50,8);
 FCIPDSDistance(FCIGodownSet,PDSSet) =normal(50,8);
 MillerRetailerDistance(MillerSet,RetailerSet) =normal(50,8);
 
-Display 
+Display
   FarmLocalCSPDistance,FarmRegionalCSPDistance,FarmLocalMarketDistance,FarmRegionalMarketDistance,LocalCSPLocalMarketDistance,
   LocalCSPRegionalMarketDistance, RegionalCSPLocalMarketDistance, RegionalCSPRegionalMarketDistance
   ;
@@ -388,7 +390,7 @@ MillerRetailerTransportationTime(MillerSet,RetailerSet,TransportationTypes) =
 MillerRetailerDrivingTime(MillerSet,RetailerSet,TransportationTypes) + TruckIdlingTimePerTrip(TransportationTypes);
 
 
-Display 
+Display
   FarmLocalCSPTransportationTime
   ;
 
@@ -547,13 +549,13 @@ MillingLoss(MillerSet) = 0.05;
 MillerAnnualCost(MillerSet) = 108472512;
 * This number is taken from the calculations provided by Shruti
 MillerOperatingCostRate(MillerSet) = 1.37;
-* This number is based on the one reported in the excel file titled "Cost of storage procurement and transportation by 
+* This number is based on the one reported in the excel file titled "Cost of storage procurement and transportation by
 * FIC.xls" obtained from IndiaStat.com
 MillerStorageCostRate(MillerSet) = 1;
 
 
 *
-* Based on the data downloaded from IndiaStat.com ("Cost on Procurement, Storage and Transportation of Foodgrains (Wheat/Rice) 
+* Based on the data downloaded from IndiaStat.com ("Cost on Procurement, Storage and Transportation of Foodgrains (Wheat/Rice)
 * by Food Corporation of India", (2009-2010 to 2011-2012) )
 *
 FCIStorageCostRate = 0.3719;
@@ -561,7 +563,7 @@ FCIStorageCostRate = 0.3719;
 FCIMandiCostRate = 0.3618;
 * This is the total cost for mandi.
 NumberOfMonthsInFCIStorage = 8;
-* This is an assumption. There have been reports (CAG report) that the duration can be as much as 2-3 years. 
+* This is an assumption. There have been reports (CAG report) that the duration can be as much as 2-3 years.
 * However, the stock will typically need to be cleared before the
 * next lot comes. Hence, we are assuming the avarerage storage time to be about 8 months.
 FCIStorageCostRateMonthly = FCIStorageCostRate/NumberOfMonthsInFCIStorage;
@@ -572,7 +574,7 @@ FCIStorageCostRateMonthly = FCIStorageCostRate/NumberOfMonthsInFCIStorage;
 FCIGodownCAPLossRate = 6;
 FCIGodownCoveredLossRate = 0.1;
 
-Parameter 
+Parameter
   PDSDemand
   RetailerDemand
   ;
@@ -586,6 +588,6 @@ PDSDemand('1',PDSSet)=0;
 RetailerDemand('1',RetailerSet)=0;
 
 
-Display 
+Display
   RegionalMarketFCIDistance,FCIMillerDistance,FCIRetailerDistance, FCIPDSDistance, RegionalMarketFCITransportationTime
   ;
