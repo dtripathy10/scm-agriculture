@@ -30,16 +30,16 @@ Display connectselected;
 
 Parameter
   DistrictArea(DistrictSelected) "District size in hectre" / 1 350 /
-  DistrictFarmer(DistrictSelected) "District farmer size" / 1 333350 /
+  DistrictFarmer(DistrictSelected) "District farmer size" / 1 3333 /
   RegionalMarketArea(DistrictSelected,RegionalMarketSet)
   RegionalMarketCapacity_Input(RegionalMarketSet,Capacity_Set)
   RegionalMarketCapacity(RegionalMarketSet)
   RegionalMarketFarmer(DistrictSelected,RegionalMarketSet)
-  FarmAggregation(FarmType) /  Marginal 1
-                               Small .4
-                               Semi_Medium .9
-                               Medium .1
-                               Large .8
+  FarmAggregation(FarmType) /  Marginal .01
+                               Small .02
+                               Semi_Medium .1
+                               Medium .01
+                               Large .03
                             /
 
   ;
@@ -113,31 +113,82 @@ Display FarmAggregation;
 
 
 Set
- FarmNumber /1*333350/
+     FarmNumber /1*3333/
+
 ;
 
 Display FarmNumber;
 
 Parameter
-* FarmSize(DistrictSelected,FarmNumber)
-* GrainProduction(DistrictSelected,FarmNumber)
-* GrainAvailable(DistrictSelected,FarmNumber)
  FarmPercentage(FarmType) /Marginal .4385
                             Small  .276
                             Semi_Medium .1865
                             Medium .889
                             Large .001
                            /
- FarmerByType(FarmType)
- FarmerByTypeAggr(FarmType)
+ FarmerByType(RegionalMarketSet,FarmType)
+ FarmerByTypeAggr(RegionalMarketSet,FarmType)
 ;
 
 loop(DistrictSelected,
  loop(RegionalMarketSet,
-   FarmerByType(RegionalMarketSet,FarmType) =  ceil(RegionalMarketFarmer(DistrictSelected,RegionalMarketSet) * FarmPercentage(FarmType));
-   FarmerByTypeAggr(RegionalMarketSet,FarmType) =  ceil(FarmerByType(FarmType) * FarmAggregation(FarmType) );
+         loop(FarmType,
+                 FarmerByType(RegionalMarketSet,FarmType) =  ceil(RegionalMarketFarmer(DistrictSelected,RegionalMarketSet) * FarmPercentage(FarmType));
+                 FarmerByTypeAggr(RegionalMarketSet,FarmType) =  ceil(FarmerByType(RegionalMarketSet,FarmType) * FarmAggregation(FarmType) );
+         )
  )
 );
 
 Display FarmerByType;
 Display FarmerByTypeAggr;
+
+
+Parameter
+    AggrgateFarmSize
+;
+
+AggrgateFarmSize   = sum((RegionalMarketSet,FarmType),FarmerByTypeAggr(RegionalMarketSet,FarmType));
+
+Display AggrgateFarmSize;
+
+Set
+         AggrFarmNumber(FarmNumber)
+;
+
+AggrFarmNumber(FarmNumber)  = no;
+AggrFarmNumber(FarmNumber)  = yes $(ord(FarmNumber) le AggrgateFarmSize);
+
+
+Display AggrFarmNumber;
+
+
+Parameter
+ FarmSize(DistrictSelected,FarmNumber)
+ GrainProduction(DistrictSelected,FarmNumber)
+ GrainAvailable(DistrictSelected,FarmNumber)
+;
+
+Scalar counter;
+Scalar tempCounter;
+Scalar i;
+
+
+counter = 1;
+
+loop(DistrictSelected,
+         loop(RegionalMarketSet,
+                 loop(FarmType,
+                      tempCounter = FarmerByTypeAggr(RegionalMarketSet,FarmType);
+                      i = 1;
+                      while((i <= tempCounter) ,
+                        FarmSize(DistrictSelected,FarmNumber)$(ord(FarmNumber) eq counter) =   0.1;
+                        GrainProduction(DistrictSelected,FarmNumber)$(ord(FarmNumber) eq counter) =   0.2;
+                        GrainAvailable(DistrictSelected,FarmNumber)$(ord(FarmNumber) eq counter) =   0.3;
+                        counter = counter + 1;
+                        i = i + 1;
+                      )
+                 )
+         )
+);
+
+Display FarmSize, GrainProduction,GrainAvailable ;
