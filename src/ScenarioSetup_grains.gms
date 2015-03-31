@@ -15,48 +15,33 @@ $title "This file is used when the user wants to simulate/optimize for a given c
 *##############################################################################################################
 * Adding the necessary sets for the grain problem here. These can be imported from a gdx file in a more efficient code. But that will be addressed later.
 Set
-  LocalCSPCenterSet
-  RegionalCSPCenterSet
-  DistrictSelected
-  LocalMarketSet
-  RegionalMarketSet
-  RGYSet
-  FCIGodownSet
-  MillerSet
-  RetailerSet
-  PDSSet
-  FarmType
+  LocalCSPCenterSet   /1*15/
+  RegionalCSPCenterSet   /1*15/
+  DistrictSelected  /1/
+  LocalMarketSet   /1*15/
+  RegionalMarketSet   /1*10/
+  RGYSet     /1*5/
+  FCIGodownSet   /1*10/
+  MillerSet    /1*15/
+  RetailerSet  /1*15/
+  PDSSet      /1*15/
+  FarmType   /Marginal,Small,Semi_Medium,Medium,Large/
   ;
 
 
-$CALL GDXXRW.EXE "../data/data/reference_data.xls"  set=LocalCSPCenterSet rng=LocalCSPCenterSet!A2:A9  Rdim=1   set=RegionalCSPCenterSet rng=RegionalCSPCenterSet!A2:A9  Rdim=1   set=DistrictSelected rng=District!B2:B52  Rdim=1 set=LocalMarketSet rng=local_market!A2:A9  Rdim=1 set=RegionalMarketSet rng=regional_market!A2:A1047  Rdim=1 set=RGYSet rng=RGYSet!A2:A9  Rdim=1 set=FCIGodownSet rng=FCIGodownSet!A2:A9  Rdim=1 set=MillerSet rng=MillerSet!A2:A9  Rdim=1 set=RetailerSet rng=RetailerSet!A2:A9  Rdim=1 set=PDSSet rng=PDSSet!A2:A9  Rdim=1 set=FarmType rng=FarmType!A2:A6  Rdim=1
+*$CALL GDXXRW.EXE "../data/data/reference_data.xls"  set=LocalCSPCenterSet rng=LocalCSPCenterSet!A2:A9  Rdim=1   set=RegionalCSPCenterSet rng=RegionalCSPCenterSet!A2:A9  Rdim=1   set=DistrictSelected rng=district!A2:A6  Rdim=1 set=LocalMarketSet rng=local_market!A2:A9  Rdim=1 set=RegionalMarketSet rng=regional_market!A2:A26  Rdim=1 set=RGYSet rng=RGYSet!A2:A9  Rdim=1 set=FCIGodownSet rng=FCIGodownSet!A2:A9  Rdim=1 set=MillerSet rng=MillerSet!A2:A9  Rdim=1 set=RetailerSet rng=RetailerSet!A2:A9  Rdim=1 set=PDSSet rng=PDSSet!A2:A9  Rdim=1 set=FarmType rng=FarmType!A2:A6  Rdim=1
 
 
-$GDXIN "reference_data.gdx"
-$LOAD  LocalCSPCenterSet, RegionalCSPCenterSet, DistrictSelected, LocalMarketSet, RegionalMarketSet, RGYSet, FCIGodownSet, MillerSet, RetailerSet, PDSSet, FarmType
-$GDXIN
-
-Display
-  LocalCSPCenterSet
-  RegionalCSPCenterSet
-  DistrictSelected
-  LocalMarketSet
-  RegionalMarketSet
-  RGYSet
-  FCIGodownSet
-  MillerSet
-  RetailerSet
-  PDSSet
-  FarmType
-  ;
+*$GDXIN "reference_data.gdx"
+*$LOAD  LocalCSPCenterSet, RegionalCSPCenterSet, DistrictSelected, LocalMarketSet, RegionalMarketSet, RGYSet, FCIGodownSet, MillerSet, RetailerSet, PDSSet, FarmType
+*$GDXIN
 
 
 set connectselected(DistrictSelected,RegionalMarketSet)
   /
-  District-1.(RegionalMarket-1,RegionalMarket-2)
-  District-2.(RegionalMarket-3,RegionalMarket-4)
+       1.(1*10)
   /
-
+  ;
 
 *$ontext
 *##############################################################################################################
@@ -90,9 +75,17 @@ alias(FarmNumber,TotalFarmNumber);
 * Declaring the parameters that impact which model is to be simulated (current or potential)
 *##############################################################################################################
 Parameter
-  CurrentScenario The parameter that indicates whether we are selecting the current wheat supply chain or not /1/
-  FutureScenario The parameter that indicates whether we are selecting the future wheat supply chain or not /0/
+  CurrentScenario "The parameter that indicates whether we are selecting the current wheat supply chain or not" /1/
+  FutureScenario "The parameter that indicates whether we are selecting the future wheat supply chain or not" /0/
   ;
+
+*##############################################################################################################
+* Declaring the parameters related to area of the district
+*##############################################################################################################
+Parameter
+  DistrictArea(DistrictSelected) "District size in hectre" / 1 350 /
+  ;
+
 
 
 *##############################################################################################################
